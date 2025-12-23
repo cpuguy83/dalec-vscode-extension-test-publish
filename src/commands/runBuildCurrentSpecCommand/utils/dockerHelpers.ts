@@ -14,6 +14,8 @@ export interface DockerCommandInputs {
   buildArgs?: Map<string, string>;
   buildContexts?: Map<string, string>;
   noCache?: boolean;
+  imageName?: string;
+  imageTag?: string;
 }
 
 export type DockerCommandMode = 'build' | 'dap';
@@ -31,6 +33,14 @@ export function createDockerBuildxCommand(inputs: DockerCommandInputs): DockerCo
     args.push('build');
   }
   args.push('--target', inputs.target, '-f', getWorkspaceRelativeFsPath(inputs.specFile));
+  
+  // Add image tag if name and version are provided
+  if (inputs.imageName && inputs.imageTag) {
+    args.push('-t', `${inputs.imageName}:${inputs.imageTag}`);
+  } else if (inputs.imageName) {
+    args.push('-t', inputs.imageName);
+  }
+  
   if (inputs.buildArgs && inputs.buildArgs.size > 0) {
     args.push(...formatBuildArgs(inputs.buildArgs));
   }

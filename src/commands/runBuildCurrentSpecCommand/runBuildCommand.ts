@@ -5,7 +5,7 @@ import { createDockerBuildxCommand, logDockerCommand } from './utils/dockerHelpe
 import { getWorkspaceRootForUri, getWorkspaceRootForPath } from './utils/pathHelpers';
 import { collectContextSelection, collectArgsSelection, type ContextSelection, type ArgsSelection } from './helpers/contextHelpers';
 import { pickTarget } from './helpers/targetHelpers';
-import { resolveDalecDocument, isValidDalecDoc } from './helpers/documentHelpers';
+import { resolveDalecDocument, isValidDalecDoc, extractDalecSpecMetadata } from './helpers/documentHelpers';
 import { rewriteSourcePathsForBreakpoints, logDapTraffic } from './helpers/dapHelpers';
 import { recordFromMap, mapFromRecord } from './utils/conversionHelpers';
 import { getTerminalCommentPrefix } from './utils/terminalHelpers';
@@ -59,6 +59,9 @@ export async function runBuildCommand(
     return;
   }
 
+  // Extract name and version from the Dalec spec
+  const specMetadata = await extractDalecSpecMetadata(document);
+
   const dockerCommand = createDockerBuildxCommand({
     mode: 'build',
     target,
@@ -66,7 +69,10 @@ export async function runBuildCommand(
     context: contextSelection.defaultContextPath,
     buildArgs: argsSelection.values,
     buildContexts: contextSelection.additionalContexts,
+    imageName: specMetadata.name,
+    imageTag: specMetadata.version,
   });
+
   const formattedCommand = logDockerCommand('Build command', dockerCommand);
   const terminal = vscode.window.createTerminal({
     name: `Dalec Build (${target})`,
@@ -76,6 +82,7 @@ export async function runBuildCommand(
       BUILDX_EXPERIMENTAL: '1',
     },
   });
+
   terminal.show();
   terminal.sendText(`${getTerminalCommentPrefix()} Dalec command: ${formattedCommand}`);
   terminal.sendText(formattedCommand);

@@ -1,5 +1,29 @@
 import * as vscode from 'vscode';
+import * as YAML from 'yaml';
 import { DalecDocumentTracker } from '../dalecDocumentTracker';
+
+export interface DalecSpecMetadata {
+  name?: string;
+  version?: string;
+}
+
+/**
+ * Extracts name and version from a Dalec spec file
+ */
+export async function extractDalecSpecMetadata(document: vscode.TextDocument): Promise<DalecSpecMetadata> {
+  try {
+    const content = document.getText();
+    const parsed = YAML.parse(content);
+    
+    return {
+      name: typeof parsed?.name === 'string' ? parsed.name : undefined,
+      version: typeof parsed?.version === 'string' ? parsed.version : undefined,
+    };
+  } catch (error) {
+    console.error('Failed to parse Dalec spec:', error);
+    return {};
+  }
+}
 
 export async function resolveDalecDocument(
   uri: vscode.Uri | undefined,
