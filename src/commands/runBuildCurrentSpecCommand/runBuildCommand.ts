@@ -59,8 +59,16 @@ export async function runBuildCommand(
     return;
   }
 
-  // Extract name and version from the Dalec spec
+  // Extract name, version, and revision from the Dalec spec
   const specMetadata = await extractDalecSpecMetadata(document);
+
+  // Construct image tag as version-revision
+  let imageTag: string | undefined;
+  if (specMetadata.version && specMetadata.revision) {
+    imageTag = `${specMetadata.version}-${specMetadata.revision}`;
+  } else if (specMetadata.version) {
+    imageTag = specMetadata.version;
+  }
 
   const dockerCommand = createDockerBuildxCommand({
     mode: 'build',
@@ -70,7 +78,7 @@ export async function runBuildCommand(
     buildArgs: argsSelection.values,
     buildContexts: contextSelection.additionalContexts,
     imageName: specMetadata.name,
-    imageTag: specMetadata.version,
+    imageTag,
   });
 
   const formattedCommand = logDockerCommand('Build command', dockerCommand);

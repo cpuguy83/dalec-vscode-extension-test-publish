@@ -5,10 +5,11 @@ import { DalecDocumentTracker } from '../dalecDocumentTracker';
 export interface DalecSpecMetadata {
   name?: string;
   version?: string;
+  revision?: string;
 }
 
 /**
- * Extracts name and version from a Dalec spec file
+ * Extracts name, version, and revision from a Dalec spec file
  */
 export async function extractDalecSpecMetadata(document: vscode.TextDocument): Promise<DalecSpecMetadata> {
   try {
@@ -18,6 +19,7 @@ export async function extractDalecSpecMetadata(document: vscode.TextDocument): P
     return {
       name: typeof parsed?.name === 'string' ? parsed.name : undefined,
       version: typeof parsed?.version === 'string' ? parsed.version : undefined,
+      revision: parsed?.revision !== undefined ? String(parsed.revision) : undefined,
     };
   } catch (error) {
     console.error('Failed to parse Dalec spec:', error);
