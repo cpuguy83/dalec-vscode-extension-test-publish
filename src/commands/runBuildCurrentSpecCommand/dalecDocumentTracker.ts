@@ -6,7 +6,7 @@ const contextSelectionCache = new Map<string, ContextSelection>();
 const argsSelectionCache = new Map<string, ArgsSelection>();
 const YAML_EXTENSION_ID = 'redhat.vscode-yaml';
 const SCHEMA_SCHEME = 'dalec-schema';
-const FALLBACK_SCHEMA_RELATIVE_PATH = ['docs', 'spec.schema.json'];
+const FALLBACK_SCHEMA_RELATIVE_PATH = ['schemas', 'spec.schema.json'];
 type YamlExtensionApi = YamlExtensionExports;
 // dalec-vscode-tools
 
@@ -296,6 +296,8 @@ export class DalecSchemaProvider implements vscode.Disposable {
       void vscode.window.showWarningMessage(
         'Dalec spec schema contributor could not be registered; another schema provider may already exist.',
       );
+    } else {
+      console.log('[Dalec] Schema contributor registered successfully');
     }
   }
 
@@ -328,12 +330,13 @@ export class DalecSchemaProvider implements vscode.Disposable {
 
   private async readSchema(workspaceUri?: vscode.Uri): Promise<string | undefined> {
     if (workspaceUri) {
-      const docPath = vscode.Uri.joinPath(workspaceUri, 'docs', 'spec.schema.json');
+      const docPath = vscode.Uri.joinPath(workspaceUri, ...FALLBACK_SCHEMA_RELATIVE_PATH);
       try {
         const content = await vscode.workspace.fs.readFile(docPath);
         return new TextDecoder().decode(content);
-      } catch {
+      } catch (err) {
         // Fall back below.
+        console.warn(`[Dalec] Could not load workspace schema: ${docPath.fsPath} (${err})`);
       }
     }
 
