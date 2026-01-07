@@ -4,6 +4,6 @@ All notable changes to the "dalec-vscode-tools" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.0.1-alpha]
+## [0.0.1]
 
 - Initial release with build and rerun last feature.
