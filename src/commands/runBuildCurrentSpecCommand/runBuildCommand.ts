@@ -275,10 +275,6 @@ export class DalecDebugConfigurationProvider implements vscode.DebugConfiguratio
     return config;
   }
 
-  private containsVariableReference(value: string): boolean {
-    return value.includes('${');
-  }
-
   private resolvePath(input: string, folder: vscode.WorkspaceFolder | undefined): string {
     if (path.isAbsolute(input)) {
       return input;

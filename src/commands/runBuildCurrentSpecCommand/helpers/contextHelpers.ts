@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { DalecDocumentTracker } from '../dalecDocumentTracker';
-import { resolveContextReference, getSpecWorkspacePath } from '../utils/pathHelpers';
+import { resolveContextReference } from '../utils/pathHelpers';
 
 const emptyContextDirPath = path.join(os.tmpdir(), 'dalec-empty-context');
 let emptyContextDirReady: Promise<string> | undefined;

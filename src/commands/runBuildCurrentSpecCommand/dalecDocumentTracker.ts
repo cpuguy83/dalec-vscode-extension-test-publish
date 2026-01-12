@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import YAML, { LineCounter, Pair, visit } from 'yaml';
+import * as YAML from 'yaml';
 
 // Legacy regex for built-in Dalec frontend patterns
 const LEGACY_SYNTAX_REGEX = /^#\s*syntax\s*=\s*(?<image>ghcr\.io\/(?:project-dalec|azure)\/dalec\/frontend:[^\s#]+|[^\s#]*dalec[^\s#]*)/i;
@@ -284,11 +284,6 @@ function clearCachedArgsSelection(uri: vscode.Uri) {
   argsSelectionCache.delete(uri.toString());
 }
 
-function toInputValue(value: string | undefined): string {
-  return value ?? '.';
-}
-
-
 function extractTargetsFromSpec(spec: DalecSpecDocument): string[] {
   const rawTargets = spec.targets;
   if (!isRecordLike(rawTargets)) {
@@ -411,7 +406,7 @@ export class DalecSchemaProvider implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [];
 
   constructor(
-    private readonly context: vscode.ExtensionContext,
+    context: vscode.ExtensionContext,
     private readonly tracker: DalecDocumentTracker,
   ) {
     this.fallbackSchemaUri = vscode.Uri.joinPath(

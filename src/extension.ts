@@ -8,9 +8,6 @@ import { rerunLastAction } from './commands/reRunLastAction/reRunLastAction';
 
 const DEBUG_TYPE = 'dalec-buildx';
 
-let dalecOutputChannel: vscode.OutputChannel | undefined;
-let workspaceRoot: string | undefined;
-
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -19,10 +16,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	const tracker = new DalecDocumentTracker();
 	context.subscriptions.push(tracker);
 	const lastAction = new LastDalecActionState();
-	dalecOutputChannel = vscode.window.createOutputChannel('Dalec Spec');
+	const dalecOutputChannel = vscode.window.createOutputChannel('Dalec Spec');
 	context.subscriptions.push(dalecOutputChannel);
-
-	workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
 	const schemaProvider = new DalecSchemaProvider(context, tracker);
 	await schemaProvider.initialize();

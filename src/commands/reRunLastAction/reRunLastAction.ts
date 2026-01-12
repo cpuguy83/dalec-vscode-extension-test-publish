@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { DalecDocumentTracker } from "../runBuildCurrentSpecCommand/dalecDocumentTracker";
 import { LastDalecActionState } from "../runBuildCurrentSpecCommand/runBuildCommand";
 import { resolveDalecDocument } from '../runBuildCurrentSpecCommand/helpers/documentHelpers';
-import { BuildTargetInfo } from '../runBuildCurrentSpecCommand/helpers/targetHelpers';
 import { getWorkspaceRootForUri } from '../runBuildCurrentSpecCommand/utils/pathHelpers';
 import { ArgsSelection, collectArgsSelection, collectContextSelection, ContextSelection } from '../runBuildCurrentSpecCommand/helpers/contextHelpers';
 import { createDockerBuildxCommand, logDockerCommand } from '../runBuildCurrentSpecCommand/utils/dockerHelpers';
@@ -112,18 +111,3 @@ function argsSatisfied(selection: ArgsSelection, definedArgs?: Map<string, strin
   return true;
 }
 
-function groupTargets(targets: BuildTargetInfo[]): Map<string, BuildTargetInfo[]> {
-  const grouped = new Map<string, BuildTargetInfo[]>();
-  for (const info of targets) {
-    const scope = info.name.split('/')[0] || info.name;
-    if (!grouped.has(scope)) {
-      grouped.set(scope, []);
-    }
-    grouped.get(scope)!.push(info);
-  }
-  return grouped;
-}
-
-function isDebugScope(value: string): boolean {
-  return value.toLowerCase() === 'debug';
-}

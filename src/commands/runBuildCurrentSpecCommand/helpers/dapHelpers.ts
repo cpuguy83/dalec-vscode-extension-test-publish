@@ -1,4 +1,3 @@
-import * as vscode from 'vscode';
 import { getDalecOutputChannel } from '../utils/dockerHelpers';
 import { getWorkspaceRelativeFsPath } from '../utils/pathHelpers';
 

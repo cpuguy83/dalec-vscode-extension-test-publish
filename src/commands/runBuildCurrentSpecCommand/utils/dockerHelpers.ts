@@ -1,9 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { promisify } from 'util';
-import { execFile, spawn } from 'child_process';
-
-const execFileAsync = promisify(execFile);
+import { spawn } from 'child_process';
 
 export interface DockerCommand {
   binary: string;
