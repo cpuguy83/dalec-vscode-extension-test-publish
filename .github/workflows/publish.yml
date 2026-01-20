@@ -86,11 +86,20 @@ jobs:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
           dryRun: true
+      - name: Prepare vsix for sbom
+        id: prepare-sbom
+        run: |
+          set -x
+          dir="$(mktemp -d)"
+          echo "SBOM_SCAN_DIR=${dir}" >> "${GITHUB_OUTPUT}"
+          unzip -q "${VSIX_PATH}" -d "${dir}"
+        env:
+          VSIX_PATH: ${{ steps.create_vsix.outputs.vsixPath }}
       - name: Install cosign
         uses: sigstore/cosign-installer@v3
       - uses: anchore/sbom-action@v0
         with:
-          file: ${{ steps.create_vsix.outputs.vsixPath }}
+          path: ${{ steps.prepare-sbom.outputs.SBOM_SCAN_DIR }}
           upload-release-assets: false
           format: cyclonedx-json
           output-file: ${{ steps.create_vsix.outputs.vsixPath }}.cdx.json
