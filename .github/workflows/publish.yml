@@ -7,7 +7,6 @@ permissions:
   contents: read
   security-events: none
 
-
 jobs:
   JobBuild:
     name: release
@@ -84,11 +83,17 @@ jobs:
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
+      - name: digest artifacts
+        run: sha256sum "${VSIX_PATH}" >> "${VISX_PATH}.sha256"
+        env:
+          VSIX_PATH: ${{ steps.create_vsix.outputs.vsixPath }}
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           body: Publish ${{ needs.JobBuild.outputs.changelog_reader_changes }}
           name: ${{ needs.JobBuild.outputs.currentversion }}
           tag_name: ${{ needs.JobBuild.outputs.currentversion }}
-          files: ${{ steps.create_vsix.outputs.vsixPath}}
+          files: |
+            ${{ steps.create_vsix.outputs.vsixPath }}
+            ${{ steps.create_vsix.outputs.vsixPath }}.sha256
 
