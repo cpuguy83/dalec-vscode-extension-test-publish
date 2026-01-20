@@ -60,6 +60,7 @@ jobs:
       contents: write
       deployments: read
       packages: none
+      id-token: write
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
@@ -93,8 +94,8 @@ jobs:
           cd "$(dirname "${VSIX_PATH}")"
           sha256sum "$(basename "${VSIX_PATH}")" > "${VSIX_PATH}.sha256"
 
-          cosign sign-blob --yes --bundle "${VSIX_PATH}.sigstore.bundle" "${VSIX_PATH}"
-          cosign sign-blob --yes --bundle "${VSIX_PATH}.sha256.sigstore.bundle" "${VSIX_PATH}.sha256"
+          cosign sign-blob --oidc-provider=github-actions --yes --bundle "${VSIX_PATH}.sigstore.bundle" "${VSIX_PATH}"
+          cosign sign-blob --oidc-provider=github-actions --yes --bundle "${VSIX_PATH}.sha256.sigstore.bundle" "${VSIX_PATH}.sha256"
         env:
           VSIX_PATH: ${{ steps.create_vsix.outputs.vsixPath }}
       - name: Create release
