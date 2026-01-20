@@ -61,6 +61,7 @@ jobs:
       deployments: read
       packages: none
       id-token: write
+      attestations: write
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
@@ -98,6 +99,10 @@ jobs:
           cosign sign-blob --oidc-provider=github-actions --yes --bundle "${VSIX_PATH}.sha256.sigstore.bundle" "${VSIX_PATH}.sha256"
         env:
           VSIX_PATH: ${{ steps.create_vsix.outputs.vsixPath }}
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: ${{ steps.create_vsix.outputs.vsixPath }}
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
