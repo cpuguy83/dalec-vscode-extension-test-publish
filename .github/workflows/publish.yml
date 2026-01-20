@@ -85,6 +85,7 @@ jobs:
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
+          dryRun: true
       - name: Install cosign
         uses: sigstore/cosign-installer@v3
       - uses: anchore/sbom-action@v0
