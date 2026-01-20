@@ -104,14 +104,10 @@ jobs:
         with:
           subject-path: ${{ steps.create_vsix.outputs.vsixPath }}
       - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          body: Publish ${{ needs.JobBuild.outputs.changelog_reader_changes }}
-          name: ${{ needs.JobBuild.outputs.currentversion }}
-          tag_name: ${{ needs.JobBuild.outputs.currentversion }}
-          files: |
-            ${{ steps.create_vsix.outputs.vsixPath }}
-            ${{ steps.create_vsix.outputs.vsixPath }}.sigstore.bundle
-            ${{ steps.create_vsix.outputs.vsixPath }}.sha256
-            ${{ steps.create_vsix.outputs.vsixPath }}.sha256.sigstore.bundle
+        run: |
+          gh release create ${RELEASE_NAME} --notes "${RELEASE_BODY}" ${{ steps.create_vsix.outputs.vsixPath }}*
+        env:
+          RELEASE_NAME: ${{ needs.JobBuild.outputs.currentversion }}
+          RELEASE_BODY: Publish ${{ needs.JobBuild.outputs.changelog_reader_changes }}
+          GH_TOKEN: ${{ github.token }}
 
