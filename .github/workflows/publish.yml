@@ -120,7 +120,7 @@ jobs:
         with:
           subject-path: ${{ steps.create_vsix.outputs.vsixPath }}
       - name: Generate SBOM attestation
-        uses: actions/attest-sbom@v2
+        uses: actions/attest-sbom@v3
         with:
           subject-path: ${{ steps.create_vsix.outputs.vsixPath }}
           sbom-path: ${{ steps.create_vsix.outputs.vsixPath }}.cdx.json
